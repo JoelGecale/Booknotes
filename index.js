@@ -114,6 +114,30 @@ async function getMostRecent() {
 
 //TOP 3 view ends here
 
+//DB operations for notes starts here
+
+async function getNotes(book_id){
+    const result = await db.query('SELECT * FROM notes WHERE book_id = $1 ORDER BY id ASC', [book_id]);
+    return result.rows;
+}
+
+async function addNotes(notes, book_id){
+    const result = await db.query('INSERT INTO notes(notes, book_id) VALUES($1, $2) RETURNING *', [notes, book_id]);
+    return result.rows;
+}
+
+async function updateNotes(note){
+    const result = await db.query('UPDATE notes SET notes = $1 WHERE id = $2 RETURNING *', [note.notes, note.id]);
+    return result.rows;
+}
+
+async function deleteNotes(notes_id){
+    const result = await db.query('DELETE FROM notes WHERE id = $1', [notes_id]);
+    return result.rows;
+}
+
+//DB operations for notes ends here
+
 app.get("/", async (req, res) => {
     const topRecommendations = await getTopRecommendations();
     const mostRecent = await getMostRecent();
@@ -199,6 +223,29 @@ app.post("/submit-review", async (req, res) => {
     
     res.redirect("/books");
 })
+
+app.get("/notes/:id", async (req, res) => {
+    const book = await getBookByID(parseInt(req.params.id));  
+    const notes = await getNotes(parseInt(req.params.id));
+    res.render("notes.ejs", {book, notes}); 
+});
+
+app.post("/add-notes", async (req, res) => {
+    const notes = await addNotes(req.body.notes, parseInt(req.body.book_id));
+    res.redirect("/notes/" + req.body.book_id);
+});
+
+app.post("/edit-notes", async (req, res) => {
+    let notes; 
+    
+    if(req.body.submit === "update"){
+        notes= await updateNotes({id: parseInt(req.body.notes_id), notes: req.body.notes.trim()});
+    }
+    else  if(req.body.submit === "delete"){
+        notes = await deleteNotes(parseInt(req.body.notes_id));
+    }
+    res.redirect("/notes/" + req.body.book_id);
+});
 
 app.listen(3000, () => {
     console.log(`The server is listening on post ${port}`);

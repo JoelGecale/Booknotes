@@ -3,7 +3,7 @@
 <body class="d-flex flex-column min-vh-100">
     <%- include("partials/header.ejs") %>
 
-    <div class="container">
+    <div class="container pb-3">
 
         <div class="d-flex flex-column pt-3">
                 <div class="card mb-3 shadow-sm rounded">
@@ -22,7 +22,61 @@
                 </div>
               </div>       
         </div>
+
+        <form action="/add-notes" method="POST" class="py-3">
+            <input type="hidden" name="book_id" value="<%= book.id %>"/> 
+            <h4 class="h5 mb-3 fw-normal"> Add Notes</h4>
+            
+            <textarea class="form-control" id="notes" rows="3" name="notes" placeholder="Notes"></textarea>
+
+            <div class="d-flex justify-content-end py-3 gap-2">
+                <button class="btn btn-secondary py-2" type="submit" name="submit">
+                  Save
+                </button>
+            </div>
+          </form> 
+
+          <div>
+
+          <h4 class="h5 mb-3 fw-normal"> Notes:</h4>
+          <% if (locals.notes) { %>
+              <% notes.forEach((note) => { %>
+                <div class="border-bottom">
+                  <p class="py-1 mb-0 lh-sm notes" id="notes<%= note.id %>">
+                    <%= note.notes %>
+                  </p>
+                  <form action="/edit-notes" method="POST">
+                    <input type="hidden" name="book_id" value="<%= book.id %>"/> 
+                    <input type="hidden" name="notes_id" value="<%= note.id %>">
+                    <textarea class="form-control" hidden="true" name="notes" autofocus="true" id="input<%= note.id %>"><%= note.notes %></textarea>                  
+                    <div class="py-2">
+                      <button id="edit<%=note.id%>" class="edit" onclick="handler(event,'<%=note.id%>')"><img class="icon"
+                        src="/images/pencil-fill.svg" alt="pencil image"></button>
+                      <button id="done<%=note.id%>" class="edit" type="submit" name="submit" value="update" hidden><img class="icon"
+                        src="/images/check-lg.svg" alt="tick image"></button>
+                      <button id="delete<%=note.id%>" class="delete" type="submit" name="submit" value="delete"><img class="icon"
+                          src="/images/trash3-fill.svg" alt="tick image"></button>
+                    </div>
+                  </form>                 
+                </div>
+              <% }); %>
+          <% } %>
+
+          </div>
+        
+
     </div>
+
+    
+  <script>
+    function handler(e,id) {
+      e.preventDefault();
+      document.getElementById("notes" + id).setAttribute("hidden", true)
+      document.getElementById("edit" + id).setAttribute("hidden", true)
+      document.getElementById("done" + id).removeAttribute("hidden")
+      document.getElementById("input" + id).removeAttribute("hidden")
+    }
+  </script>
 
     <%- include("partials/footer.ejs") %>
 </body>
