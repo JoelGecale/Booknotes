@@ -5,23 +5,17 @@
 
     <div class="container">
 
-        <div class="d-flex flex-column pt-3">
-                <div class="card mb-3 shadow-sm rounded">
-                <div class="row g-0">
-                  <div class="col-lg-1">
-                    <img src="<%= book.cover_url %>" class="rounded-start card-img" alt="book cover">
-                  </div>
-                  <div class="col-lg-11 ps-4">
-                    <div class="card-body">
-                      <h5 class="card-title"><%= book.title %></h5>
-                      <p class="card-text">by <%= book.author %></p>
-                      <p class="card-text"><%= book.description %></p>
-                      <p class="card-text"><small class="text-body-secondary">ISBN: <%= book.isbn %> </small></p>
-                    </div>
-                  </div>
-                </div>
-              </div>       
-        </div>
+      <div class="d-flex border-bottom mb-3 py-3">
+          <div class="col-sm-10">
+              <h2 class="display-5 link-body-emphasis mb-1"><%= book.title %></h2>
+              <p class="blog-post-meta">by <%= book.author %></p>
+              <p class="blog-post-meta"><%= book.description %></p>
+              <p class="blog-post-meta pt-3">ISBN: <%= book.isbn %></p>
+          </div>
+          <div class="col-sm-2">
+              <img src="<%= book.cover_url %>" class="img-fluid view-img" alt="book cover"/>
+          </div>
+      </div>
 
         <form action="/submit-review" method="POST" class="py-3" name="form-review">
             <h4 class="h5 mb-3 fw-normal"><%= title %></h4>

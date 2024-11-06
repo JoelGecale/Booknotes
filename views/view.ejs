@@ -1,0 +1,37 @@
+<%- include("partials/title.ejs") %>
+
+<body class="d-flex flex-column min-vh-100">
+    <%- include("partials/header.ejs") %>
+
+    <div class="container py-4">
+
+        <article class="blog-post">           
+            <div class="d-flex border-bottom mb-3 pb-3">
+                <div class="col-sm-10">
+                    <h2 class="display-5 link-body-emphasis mb-1"><%= book.title %></h2>
+                    <p class="blog-post-meta">by <%= book.author %></p>
+                    <p class="blog-post-meta"><%= book.description %></p>
+                    <p class="blog-post-meta pt-3">Date read: <%= book.date_read.toDateString() %></p>
+                    <p class="blog-post-meta"><strong>Rating: <%= book.rating %>/10</strong></p>
+                </div>
+                <div class="col-sm-2">
+                    <img src="<%= book.cover_url %>" class="img-fluid view-img" alt="book cover"/>
+                </div>
+            </div>
+    
+            <h2 class="py-3">Review</h2>
+            <p><%= book.review %></p>
+
+            <h2 class="py-3">Keynotes</h2>            
+            
+            <% notes.forEach((note) => { %>
+                 <p class="notes py-2"><%= note.notes %></p>
+            <% }); %>          
+            
+          </article>
+
+    </div>
+
+    <%- include("partials/footer.ejs") %>
+</body>
+</html>

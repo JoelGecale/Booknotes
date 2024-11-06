@@ -138,6 +138,11 @@ async function deleteNotes(notes_id){
 
 //DB operations for notes ends here
 
+async function getViewByID(book_id){
+    const result = await db.query("SELECT b.*, r.date_read, r.rating, r.review, n.notes FROM books b JOIN reviews r ON b.id = r.book_id LEFT JOIN notes n ON b.id = n.book_id WHERE b.id = $1", [book_id]);
+    return result.rows;
+}
+
 app.get("/", async (req, res) => {
     const topRecommendations = await getTopRecommendations();
     const mostRecent = await getMostRecent();
@@ -245,6 +250,12 @@ app.post("/edit-notes", async (req, res) => {
         notes = await deleteNotes(parseInt(req.body.notes_id));
     }
     res.redirect("/notes/" + req.body.book_id);
+});
+
+
+app.get("/view/:id", async (req, res) => {
+    const book = await getViewByID(parseInt(req.params.id));
+    res.render("view.ejs", {book: book[0], notes: book});
 });
 
 app.listen(3000, () => {

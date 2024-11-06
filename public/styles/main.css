@@ -23,6 +23,10 @@ body {
     text-decoration: underline;
   }
 
+.page-link:hover{
+  color: lightgray;
+}
+
 .bi {
   width: 24px;
   height: 24px;
@@ -62,4 +66,17 @@ textarea {
 
 .notes {
   white-space: pre-line;
+}
+
+.card-link {
+  text-decoration: none;
+}
+
+.card-link:hover {
+  opacity: 0.5;
+}
+
+.view-img {
+  height: 256px;
+  width: 256px;
 }
