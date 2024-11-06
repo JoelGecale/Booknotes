@@ -1,0 +1,57 @@
+body {
+  background-color: rgb(252, 250, 238);
+  font-family: "Roboto Slab", serif;
+  font-optical-sizing: auto;
+  font-weight: normal;
+  font-style: normal
+}
+
+.card {
+  background-color: rgb(252, 250, 238);
+}
+
+.header, .footer {
+  background-color: rgb(214, 192, 179);
+}
+
+.nav-link, .footer-text {
+  color: rgb(73, 54, 40);
+}
+
+.page-link {
+    color: rgb(73, 54, 40);
+    text-decoration: underline;
+  }
+
+.bi {
+  width: 24px;
+  height: 24px;
+}
+
+.nav-link:hover,
+.bi:hover {
+  color: white;
+}
+
+.logo {
+  height: 64px;
+  width: 128px;
+}
+
+.hero-img{
+    height: 60vh;
+}
+
+.card-img {
+  width: 116px;
+  height:184px;
+}
+
+textarea {
+  height: 100%;
+}
+
+.top-img {
+  width: 64px;
+  height: 64px;
+}

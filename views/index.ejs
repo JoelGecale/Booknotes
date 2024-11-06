@@ -1,0 +1,85 @@
+<%- include("partials/title.ejs") %>
+
+  <body class="d-flex flex-column min-vh-100">
+    
+    <%- include("partials/header.ejs") %>
+
+    <main>
+        <div class="container col-xxl-8 px-4 py-5">
+            <div class="row flex-lg-row-reverse align-items-center g-5 py-5">
+              <div class="col-10 col-sm-8 col-lg-6">
+                <img src="/images/hero.jpg" class="d-block mx-lg-auto hero-img" alt="books" loading="lazy">
+              </div>
+              <div class="col-lg-6">
+                <h1 class="display-5 fw-bold text-body-emphasis lh-1 mb-3">Book reviews, recommendations and more...</h1>
+                <p class="lead">This site contains a collection of our reviews and recommendation on a collection of books including our notes on the key takeaways from our reading experience.</p>
+                <div class="d-grid gap-2 d-md-flex justify-content-md-start">
+                  <button type="button" class="btn btn-secondary btn-lg px-4 me-md-2">View reviews</button>
+                  <button type="button" class="btn btn-outline-dark btn-lg px-4">About us</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="container">
+            <div class="row flex-lg-row-reverse align-items-center g-5">
+                <div class="row py-5">
+                    <div class="col-lg-6">                        
+                        <div class="rounded shadow-sm pb-3 text-white">
+                            <div class="container-fluid border-bottom bg-secondary pt-3 pb-1">                                
+                                  <h5>Top recommendations</h1>
+                              </div>
+
+                            <% topRecommendations.forEach((book) => { %>
+                                <div class="d-flex text-body-secondary pt-3 px-3 gap-3">
+                                    <div class="col-sm-1 m-auto">
+                                        <img src="<%= book.cover_url %>" alt="book cover" class="img-thumbnail img-fluid top-img"/>
+                                    </div>
+                                    <div class="col-sm-11">
+                                        <p class="pb-3 mb-0 small lh-sm border-bottom">
+                                        <strong class="d-block text-gray-dark"><%= book.title %></strong>
+                                            <%= book.description %>
+                                            <small class="d-block pt-3 fw-bold">Rating: <%= book.rating %>/10</small>
+                                        </p>
+                                    </div>
+                                </div>
+                           <% }); %>                            
+                            
+                            <small class="d-block text-end mt-3 px-3">
+                              <a href="/reviews" class="page-link">See all >></a>
+                            </small>
+                          </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="rounded shadow-sm pb-3 text-white">
+                            <div class="container-fluid border-bottom bg-secondary pt-3 pb-1">                                
+                                  <h5>Most recent reviews</h1>
+                              </div>
+                              <% mostRecent.forEach((book) => { %>
+                                <div class="d-flex text-body-secondary pt-3 px-3 gap-3">
+                                    <div class="col-sm-1 m-auto">
+                                        <img src="<%= book.cover_url %>" alt="book cover" class="img-thumbnail img-fluid top-img"/>
+                                    </div>
+                                    <div class="col-sm-11">
+                                        <p class="pb-3 mb-0 small lh-sm border-bottom">
+                                        <strong class="d-block text-gray-dark"><%= book.title %></strong>
+                                            <%= book.description %>
+                                            <small class="d-block pt-3 fw-bold">Date read: <%= book.date_read.toDateString() %></small>
+                                        </p>
+                                    </div>
+                                </div>
+                           <% }); %>                   
+
+                            <small class="d-block text-end mt-3 px-3">
+                              <a href="/reviews" class="page-link">See all >></a>
+                            </small>
+                          </div>
+                    </div>
+                </div>
+            </div>
+          </div>
+    </main>
+
+    <%- include("partials/footer.ejs") %>
+
+  </body>
+</html>

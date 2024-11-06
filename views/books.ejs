@@ -1,0 +1,59 @@
+<%- include("partials/title.ejs") %>
+
+<body class="d-flex flex-column min-vh-100">
+    <%- include("partials/header.ejs") %>
+
+    <diV class="container py-3">
+
+    <div class="d-flex">
+        <div class="d-flex col-lg-3 justify-content-lg-start">
+        <a href="/new-book"><div class="btn btn-secondary py-2">
+            + New book
+        </div></a>
+        </div>  
+        <div class="d-flex align-items-center justify-content-end col-lg-9 ps-3">
+            <span class="px-2">Sort by:</span>
+            <div class="btn-link px-2">Title</div>
+            <div class="btn-link px-2">Author</div>
+            <div class="btn-link px-2">ISBN</div>
+        </div>
+    </div>  
+    
+    <% if (locals.books) { %>        
+        <div class="d-flex flex-column pt-3">
+            <% books.forEach((book) => { %>
+
+                <div class="card mb-3 shadow-sm rounded">
+                <div class="row g-0">
+                  <div class="col-lg-1">
+                    <img src="<%= book.cover_url %>" class="rounded-start card-img" alt="book cover">
+                  </div>
+                  <div class="col-lg-11 ps-4">
+                    <div class="card-body">
+                      <h5 class="card-title"><%= book.title %></h5>
+                      <p class="card-text">by <%= book.author %></p>
+                      <p class="card-text"><%= book.description %></p>
+                      <div class="d-flex gap-2 align-items-center">
+                      <div class="col-lg-6">
+                        <p class="card-text"><small class="text-body-secondary">ISBN: <%= book.isbn %> </small></p>
+                     </div>
+                      <div class="d-flex justify-content-end col-lg-6 gap-2 pe-2">
+                        <a href="/edit-book/<%= book.id %>" ><div class="btn btn-secondary">Edit</div></a>
+                        <a href="/delete-book/<%= book.id %>" ><div class="btn btn-secondary">Delete</div></a>
+                        <a href="/review/<%= book.id %>" ><div class="btn btn-secondary">Review</div></a>
+                        <a href="/notes/<%= book.id %>" ><div class="btn btn-secondary">Notes</div></a>
+                      </div>
+                    </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+                
+            <% }); %>            
+        </div>
+    <% } %>   
+</diV>
+
+    <%- include("partials/footer.ejs") %>
+</body>
+</html>

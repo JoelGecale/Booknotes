@@ -1,0 +1,117 @@
+<%- include("partials/title.ejs") %>
+
+<body class="d-flex flex-column min-vh-100">
+    <%- include("partials/header.ejs") %>
+
+    <div class="container">
+
+        <div class="d-flex flex-column pt-3">
+                <div class="card mb-3 shadow-sm rounded">
+                <div class="row g-0">
+                  <div class="col-lg-1">
+                    <img src="<%= book.cover_url %>" class="rounded-start card-img" alt="book cover">
+                  </div>
+                  <div class="col-lg-11 ps-4">
+                    <div class="card-body">
+                      <h5 class="card-title"><%= book.title %></h5>
+                      <p class="card-text">by <%= book.author %></p>
+                      <p class="card-text"><%= book.description %></p>
+                      <p class="card-text"><small class="text-body-secondary">ISBN: <%= book.isbn %> </small></p>
+                    </div>
+                  </div>
+                </div>
+              </div>       
+        </div>
+
+        <form action="/submit-review" method="POST" class="py-3" name="form-review">
+            <h4 class="h5 mb-3 fw-normal"><%= title %></h4>
+            <input type="hidden" name="book_id" value="<%= book.id %>"/>   
+            <% if (trans === "update") { %>        
+                <input type="hidden" name="review_id" value="<%= review.id %>"/>
+                <div class="d-flex">
+                    <div class="form-floating py-2 col-sm-6 pe-1">
+                      <input
+                        type="date" 
+                        class="form-control"
+                        id="floatingInput"
+                        placeholder="Date read"
+                        name="date_read"
+                        value="<%=review.date_read.getFullYear() %>-<% if (review.date_read.getMonth() < 9) { %>0<%=review.date_read.getMonth() + 1 %><% } else { %><%=review.date_read.getMonth() + 1%><% } %>-<% if (review.date_read.getDate() < 10) { %>0<%=review.date_read.getDate()%>"<% } else { %><%=review.date_read.getDate()%>" <% } %>
+                      />
+                      <label for="floatingInput">Date read</label>
+                    </div>
+        
+                    <div class="form-floating py-2 col-sm-6 ps-1">
+                      <input
+                        type="number"
+                        class="form-control"
+                        id="floatingInput"
+                        placeholder="Rating (0-10)"
+                        name="rating"
+                        min="0"
+                        max="10"
+                        value="<%= review.rating %>"
+                      />
+                      <label for="floatingInput">Rating (0-10)</label>
+                    </div>
+      
+                  </div>
+                  
+                    <textarea class="form-control" id="review" rows="7" name="review" placeholder="Review"><%= review.review %></textarea>
+            
+            <% } else { %>       
+    
+                <div class="d-flex">
+              <div class="form-floating py-2 col-sm-6 pe-1">
+                <input
+                  type="date"
+                  class="form-control"
+                  id="floatingInput"
+                  placeholder="Date read"
+                  name="date_read"
+                />
+                <label for="floatingInput">Date read</label>
+              </div>
+  
+              <div class="form-floating py-2 col-sm-6 ps-1">
+                <input
+                  type="number"
+                  class="form-control"
+                  id="floatingInput"
+                  placeholder="Rating (0-10)"
+                  name="rating"
+                  min="0"
+                  max="10"
+                />
+                <label for="floatingInput">Rating (0-10)</label>
+              </div>
+
+            </div>
+            
+              <textarea class="form-control" id="review" rows="7" name="review" placeholder="Review"></textarea>
+
+            <% } %>
+             
+  
+              <div class="d-flex justify-content-end py-3 gap-2">
+              <button class="btn btn-secondary py-2" type="submit" name="submit" value="<%= trans %>">
+                Save
+              </button>
+
+              <% if (trans === "update") { %>
+                <button class="btn btn-secondary py-2" type="submit" name="submit" value="delete">
+                    Delete
+                </button>
+              <% } %>
+              
+              <button class="btn btn-secondary py-2" type="submit" name="submit" value="cancel">
+                Cancel
+              </button>
+            </div>
+            </form> 
+
+    </div>
+
+    <%- include("partials/footer.ejs") %>
+</body>
+</html>

@@ -1,0 +1,189 @@
+<%- include("partials/title.ejs") %>
+
+<body class="d-flex flex-column min-vh-100">
+    <%- include("partials/header.ejs") %>
+
+    <diV class="container py-5 w-50 mx-auto">
+        <form action="/submit-book" method="POST">
+          <h4 class="h5 mb-3 fw-normal"><%= title %></h4>
+          <% if (trans === "update") { %>           
+  
+            <div class="form-floating py-2">
+              <input type="hidden" name="id" value="<%= book.id %>"/>
+              <input
+                type="text"
+                class="form-control"
+                id="floatingInput"
+                placeholder="Title"
+                maxlength="100"
+                name="title"
+                value="<%= book.title %>"
+              />
+              <label for="floatingInput">Title</label>
+            </div>
+
+            <div class="form-floating py-2">
+              <input
+                type="text"
+                class="form-control"
+                id="floatingInput"
+                placeholder="Author"
+                maxlength="50"
+                name="author"
+                value="<%= book.author %>"
+              />
+              <label for="floatingInput">Author</label>
+            </div>
+
+            <div class="form-floating py-2">
+              <input
+                type="text"
+                class="form-control"
+                id="floatingInput"
+                placeholder="Description"
+                maxlength="150"
+                name="description"
+                value="<%= book.description %>"
+              />
+              <label for="floatingInput">Description</label>
+
+              <div class="form-floating py-2">
+                <input
+                  type="text"
+                  class="form-control"
+                  id="floatingInput"
+                  placeholder="ISBN"
+                  maxlength="20"
+                  name="isbn"
+                  value="<%= book.isbn %>"
+                />
+                <label for="floatingInput">ISBN</label>
+              </div>
+            </div>
+
+            <% } else if (trans === "delete") { %>           
+  
+              <div class="form-floating py-2">
+                <input type="hidden" name="id" value="<%= book.id %>"/>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="floatingInput"
+                  placeholder="Title"
+                  maxlength="100"
+                  name="title"
+                  value="<%= book.title %>"
+                  disabled
+                />
+                <label for="floatingInput">Title</label>
+              </div>
+  
+              <div class="form-floating py-2">
+                <input
+                  type="text"
+                  class="form-control"
+                  id="floatingInput"
+                  placeholder="Author"
+                  maxlength="50"
+                  name="author"
+                  value="<%= book.author %>"
+                  disabled
+                />
+                <label for="floatingInput">Author</label>
+              </div>
+  
+              <div class="form-floating py-2">
+                <input
+                  type="text"
+                  class="form-control"
+                  id="floatingInput"
+                  placeholder="Description"
+                  maxlength="150"
+                  name="description"
+                  value="<%= book.description %>"
+                  disabled
+                />
+                <label for="floatingInput">Description</label>
+  
+                <div class="form-floating py-2">
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="floatingInput"
+                    placeholder="ISBN"
+                    maxlength="20"
+                    name="isbn"
+                    value="<%= book.isbn %>"
+                    disabled
+                  />
+                  <label for="floatingInput">ISBN</label>
+                </div>
+              </div>
+
+          <% } else { %>       
+  
+            <div class="form-floating py-2">
+              <input
+                type="text"
+                class="form-control"
+                id="floatingInput"
+                placeholder="Title"
+                maxlength="100"
+                name="title"
+              />
+              <label for="floatingInput">Title</label>
+            </div>
+
+            <div class="form-floating py-2">
+              <input
+                type="text"
+                class="form-control"
+                id="floatingInput"
+                placeholder="Author"
+                maxlength="50"
+                name="author"
+              />
+              <label for="floatingInput">Author</label>
+            </div>
+
+            <div class="form-floating py-2">
+              <input
+                type="text"
+                class="form-control"
+                id="floatingInput"
+                placeholder="Description"
+                maxlength="150"
+                name="description"
+              />
+              <label for="floatingInput">Description</label>
+
+              <div class="form-floating py-2">
+                <input
+                  type="text"
+                  class="form-control"
+                  id="floatingInput"
+                  placeholder="ISBN"
+                  maxlength="20"
+                  name="isbn"
+                />
+                <label for="floatingInput">ISBN</label>
+              </div>
+            </div>
+          <% } %>
+           
+
+            <div class="d-flex justify-content-end py-3 gap-2">
+            <button class="btn btn-secondary py-2" type="submit" name="submit" value="<%= trans %>">
+              <%= button %>
+            </button>
+            <button class="btn btn-secondary py-2" type="submit" name="submit" value="cancel">
+              Cancel
+            </button>
+          </div>
+          </form>
+  
+    </diV>
+
+    <%- include("partials/footer.ejs") %>
+</body>
+</html>

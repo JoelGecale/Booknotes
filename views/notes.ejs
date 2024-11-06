@@ -1,0 +1,29 @@
+<%- include("partials/title.ejs") %>
+
+<body class="d-flex flex-column min-vh-100">
+    <%- include("partials/header.ejs") %>
+
+    <div class="container">
+
+        <div class="d-flex flex-column pt-3">
+                <div class="card mb-3 shadow-sm rounded">
+                <div class="row g-0">
+                  <div class="col-lg-1">
+                    <img src="<%= book.cover_url %>" class="rounded-start card-img" alt="book cover">
+                  </div>
+                  <div class="col-lg-11 ps-4">
+                    <div class="card-body">
+                      <h5 class="card-title"><%= book.title %></h5>
+                      <p class="card-text">by <%= book.author %></p>
+                      <p class="card-text"><%= book.description %></p>
+                      <p class="card-text"><small class="text-body-secondary">ISBN: <%= book.isbn %> </small></p>
+                    </div>
+                  </div>
+                </div>
+              </div>       
+        </div>
+    </div>
+
+    <%- include("partials/footer.ejs") %>
+</body>
+</html>
