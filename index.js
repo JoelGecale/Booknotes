@@ -32,6 +32,11 @@ async function getBookByID(book_id) {
     return result.rows[0];
 }
 
+async function getBooksByTitle(search){
+    const result = await db.query("SELECT * FROM books WHERE LOWER(title) LIKE '%' || $1 || '%' ORDER BY title ASC", [search.toLowerCase()]);
+    return result.rows;
+}
+
 async function getCoverURL(ISBN){
     // get the url of cover pic from the API
     const API_URL = "https://covers.openlibrary.org/b/isbn/";
@@ -73,6 +78,11 @@ async function deleteBooks(book_id) {
 
 //DB operations for reviews starts here
 
+async function getReviews(){
+    const result = await db.query("SELECT b.*, r.date_read, r.rating, r.review FROM books b JOIN reviews r ON b.id = r.book_id ORDER BY b.title ASC");
+    return result.rows;
+}
+
 async function getReviewByID(book_id){
     const result = await db.query("SELECT * FROM reviews WHERE book_id = $1", [book_id]);
     if(result.rowCount > 0){
@@ -81,6 +91,11 @@ async function getReviewByID(book_id){
     else{
         return "";
     }
+}
+
+async function getReviewsByTitle(title, sort) {
+    const result = await db.query("SELECT b.*, r.date_read, r.rating, r.review FROM books b JOIN reviews r ON b.id = r.book_id WHERE LOWER(b.title) LIKE '%' || $1 || '%' ORDER BY " + sort + " ASC", [title.toLowerCase()]);
+    return result.rows;
 }
 
 async function addReview(newReview, book_id){
@@ -149,13 +164,18 @@ app.get("/", async (req, res) => {
     res.render("index.ejs", {topRecommendations, mostRecent});
 });
 
-app.get("/reviews", (req, res) => {
-    res.render("reviews.ejs");
+app.get("/reviews", async (req, res) => {
+    const books = await getReviews();
+    res.render("reviews.ejs", {books: books, sort: "title"});
 });
 
 app.get("/books", async (req, res) => {
     const books = await getBooks();
     res.render("books.ejs", {books});
+});
+
+app.get("/about", (req, res) => {
+    res.render("about.ejs");
 });
 
 app.get("/new-book", (req, res) => {
@@ -256,6 +276,16 @@ app.post("/edit-notes", async (req, res) => {
 app.get("/view/:id", async (req, res) => {
     const book = await getViewByID(parseInt(req.params.id));
     res.render("view.ejs", {book: book[0], notes: book});
+});
+
+app.post("/search-books", async (req, res) => {
+    const books = await getBooksByTitle(req.body.title.trim());
+    res.render("books.ejs", {books: books, search: req.body.title.trim()})
+});
+
+app.post("/search-reviews", async (req, res) => {
+    const books = await getReviewsByTitle(req.body.title.trim(), req.body.sort);
+    res.render("reviews.ejs", {books: books, search: req.body.title.trim(), sort: req.body.sort})
 });
 
 app.listen(3000, () => {
