@@ -16,7 +16,9 @@ db.connect();
 const app = express();
 const port = 3000;
 
-//MIDDLEWARE
+let isEditor = false;
+
+//Middleware
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static("public"));
 
@@ -53,8 +55,7 @@ async function addBooks(bookDetails) {
     else {
         bookDetails.push("");
     }
-    const result = await db.query("INSERT INTO books(title, author, description, ISBN, cover_url) VALUES($1, $2, $3, $4, $5) RETURNING *", bookDetails);
-    return result.rows;
+    await db.query("INSERT INTO books(title, author, description, ISBN, cover_url) VALUES($1, $2, $3, $4, $5)", bookDetails);
 }
 
 async function updateBooks(bookDetails) {
@@ -65,13 +66,13 @@ async function updateBooks(bookDetails) {
     else {
         bookDetails.push("");
     }
-    const result = await db.query("UPDATE books SET title=$1, author=$2, description=$3, ISBN=$4, cover_url=$6 WHERE id=$5 RETURNING *", bookDetails);
-    return result.rows;
+    await db.query("UPDATE books SET title=$1, author=$2, description=$3, ISBN=$4, cover_url=$6 WHERE id=$5", bookDetails);
 }
 
 async function deleteBooks(book_id) {
-    const result = await db.query("DELETE FROM books WHERE id=$1", [book_id]);
-    return result.rows;
+    await db.query("DELETE FROM notes WHERE book_id=$1", [book_id]);
+    await db.query("DELETE FROM reviews WHERE book_id=$1", [book_id]);
+    await db.query("DELETE FROM books WHERE id=$1", [book_id]);
 }
 
 //DB operations for books table ends here
@@ -99,18 +100,15 @@ async function getReviewsByTitle(title, sort) {
 }
 
 async function addReview(newReview, book_id){
-    const result = await db.query("INSERT INTO reviews(rating, date_read, review, book_id) VALUES($1, $2, $3, $4) RETURNING *", [newReview.rating, newReview.date_read, newReview.review, book_id]);
-    return result.rows;
+    await db.query("INSERT INTO reviews(rating, date_read, review, book_id) VALUES($1, $2, $3, $4)", [newReview.rating, newReview.date_read, newReview.review, book_id]);
 }
 
 async function updateReview(reviewToUpdate){
-    const result = await db.query("UPDATE reviews SET date_read = $1, rating = $2, review = $3 WHERE id = $4 RETURNING *", [reviewToUpdate.date_read, reviewToUpdate.rating, reviewToUpdate.review, reviewToUpdate.id]);
-    return result.rows;
+    await db.query("UPDATE reviews SET date_read = $1, rating = $2, review = $3 WHERE id = $4", [reviewToUpdate.date_read, reviewToUpdate.rating, reviewToUpdate.review, reviewToUpdate.id]);
 }
 
 async function deleteReview(review_id){
-    const result = await db.query("DELETE FROM reviews WHERE id = $1 RETURNING *", [review_id]);
-    return result.rows;
+    await db.query("DELETE FROM reviews WHERE id = $1", [review_id]);
 }
 
 //DB operations for reviews ends here
@@ -137,18 +135,15 @@ async function getNotes(book_id){
 }
 
 async function addNotes(notes, book_id){
-    const result = await db.query('INSERT INTO notes(notes, book_id) VALUES($1, $2) RETURNING *', [notes, book_id]);
-    return result.rows;
+    await db.query('INSERT INTO notes(notes, book_id) VALUES($1, $2) RETURNING *', [notes, book_id]);
 }
 
 async function updateNotes(note){
-    const result = await db.query('UPDATE notes SET notes = $1 WHERE id = $2 RETURNING *', [note.notes, note.id]);
-    return result.rows;
+    await db.query('UPDATE notes SET notes = $1 WHERE id = $2 RETURNING *', [note.notes, note.id]);
 }
 
 async function deleteNotes(notes_id){
-    const result = await db.query('DELETE FROM notes WHERE id = $1', [notes_id]);
-    return result.rows;
+    await db.query('DELETE FROM notes WHERE id = $1', [notes_id]);
 }
 
 //DB operations for notes ends here
@@ -157,6 +152,19 @@ async function getViewByID(book_id){
     const result = await db.query("SELECT b.*, r.date_read, r.rating, r.review, n.notes FROM books b JOIN reviews r ON b.id = r.book_id LEFT JOIN notes n ON b.id = n.book_id WHERE b.id = $1", [book_id]);
     return result.rows;
 }
+
+async function isValid(username, password){
+    const result = await db.query("SELECT * FROM editor WHERE LOWER(username) = $1 AND password = $2", [username.toLowerCase(), password]);
+   
+    if(result.rowCount > 0){
+        isEditor = true;
+    }
+    else {
+        isEditor = false;
+    }
+
+    return isEditor;
+};
 
 app.get("/", async (req, res) => {
     const topRecommendations = await getTopRecommendations();
@@ -170,8 +178,13 @@ app.get("/reviews", async (req, res) => {
 });
 
 app.get("/books", async (req, res) => {
-    const books = await getBooks();
-    res.render("books.ejs", {books});
+    if(isEditor){
+        const books = await getBooks();
+        res.render("books.ejs", {books});
+    }
+    else{
+        res.redirect("/editor");
+    }
 });
 
 app.get("/about", (req, res) => {
@@ -183,19 +196,17 @@ app.get("/new-book", (req, res) => {
 })
 
 app.post("/submit-book", async (req, res) => {
-
-    let result;
     switch (req.body.submit) {
         case "new":
-            result = await addBooks([req.body.title.trim(), req.body.author.trim(), req.body.description.trim(), req.body.isbn.trim()]);
+            await addBooks([req.body.title.trim(), req.body.author.trim(), req.body.description.trim(), req.body.isbn.trim()]);
             break;
     
         case "update":
-            result = await updateBooks([req.body.title.trim(), req.body.author.trim(), req.body.description.trim(), req.body.isbn.trim(), req.body.id]);
+            await updateBooks([req.body.title.trim(), req.body.author.trim(), req.body.description.trim(), req.body.isbn.trim(), req.body.id]);
             break;
         
         case "delete":
-            result = await deleteBooks(parseInt(req.body.id));
+            await deleteBooks(parseInt(req.body.id));
             break;
 
         default:
@@ -227,19 +238,17 @@ app.get("/review/:id", async (req, res) => {
 });
 
 app.post("/submit-review", async (req, res) => {
-    let result;
-
     switch (req.body.submit) {
         case "new":
-            result = await addReview({rating: req.body.rating, date_read: req.body.date_read, review: req.body.review}, parseInt(req.body.book_id));
+            await addReview({rating: req.body.rating, date_read: req.body.date_read, review: req.body.review}, parseInt(req.body.book_id));
             break;
 
         case "update":
-            result = await updateReview({rating: req.body.rating, date_read: req.body.date_read, review: req.body.review, id: parseInt(req.body.review_id)});
+            await updateReview({rating: req.body.rating, date_read: req.body.date_read, review: req.body.review, id: parseInt(req.body.review_id)});
             break;
 
         case "delete":
-            result = await deleteReview(parseInt(req.body.review_id));
+            await deleteReview(parseInt(req.body.review_id));
             break;
     
         default:
@@ -256,18 +265,21 @@ app.get("/notes/:id", async (req, res) => {
 });
 
 app.post("/add-notes", async (req, res) => {
-    const notes = await addNotes(req.body.notes, parseInt(req.body.book_id));
-    res.redirect("/notes/" + req.body.book_id);
+    if(req.body.submit === "save"){
+        await addNotes(req.body.notes, parseInt(req.body.book_id));
+        res.redirect("/notes/" + req.body.book_id);
+    }
+    else{
+        res.redirect("/books");
+    }
 });
 
-app.post("/edit-notes", async (req, res) => {
-    let notes; 
-    
+app.post("/edit-notes", async (req, res) => {    
     if(req.body.submit === "update"){
-        notes= await updateNotes({id: parseInt(req.body.notes_id), notes: req.body.notes.trim()});
+        await updateNotes({id: parseInt(req.body.notes_id), notes: req.body.notes.trim()});
     }
     else  if(req.body.submit === "delete"){
-        notes = await deleteNotes(parseInt(req.body.notes_id));
+        await deleteNotes(parseInt(req.body.notes_id));
     }
     res.redirect("/notes/" + req.body.book_id);
 });
@@ -286,6 +298,24 @@ app.post("/search-books", async (req, res) => {
 app.post("/search-reviews", async (req, res) => {
     const books = await getReviewsByTitle(req.body.title.trim(), req.body.sort);
     res.render("reviews.ejs", {books: books, search: req.body.title.trim(), sort: req.body.sort})
+});
+
+app.get("/editor", (req, res) => {
+    if(isEditor){
+        res.redirect("/books");
+    }
+    else{
+        res.render("editor.ejs");
+    }
+});
+
+app.post("/signin", async (req, res) => {
+    if(await isValid(req.body.username.trim(), req.body.password)){
+        res.redirect("/books");
+    }
+    else {
+        res.render("editor.ejs", {error: "Invalid credentials"});
+    }
 });
 
 app.listen(3000, () => {

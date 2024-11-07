@@ -10,7 +10,7 @@ body {
   background-color: rgb(252, 250, 238);
 }
 
-.header, .footer {
+.header, .footer, .signin {
   background-color: rgb(214, 192, 179);
 }
 
