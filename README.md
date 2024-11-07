@@ -1,0 +1,2 @@
+>Booknotes is a web application that allows the user to view a collection of book reviews and notes prepared by the editors. The reviews are presented in a detailed manner which can be sorted by title, rating or date for easier naviagtion. The user can also search for a specific book by its title. It also shows the book covers which are automatically captured from an external API based on the ISBN.
+>There is also a "Books" section available to those with editor access which allows them to create and maintain the book records, reviews and notes.
